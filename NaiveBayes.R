@@ -1,5 +1,9 @@
 shots<-read.csv('data/data.csv')
 
+# Skip the competition rows kept by Kaggle
+shots<-shots[!is.na(shots$shot_made_flag),]
+
+
 # TODO 
 # A lot of the data is numeric, apparently the naiveBayes from e1071
 # deals only with discrete data, so we could discretize the values 
@@ -13,14 +17,34 @@ shots<-read.csv('data/data.csv')
 shots$local_or_visitor<-'local'
 shots[grep('@',shots$matchup),]$local_or_visitor<-'visitor'
 shots$matchup<- NULL
+
+# Drop some numeric values
+shots$game_event_id <- NULL
+shots$game_id <- NULL
+shots$loc_x <- NULL
+shots$loc_y <- NULL
+shots$lon <- NULL
+shots$lat <- NULL
+shots$seconds_remaining <- NULL
+shots$season <- NULL
+shots$team_id <- NULL
+shots$game_date <- NULL
+shots$shot_id <- NULL
+
+# Turn some numeric into factors
+shots$minutes_remaining <- as.factor(shots$minutes_remaining)
+shots$period <- as.factor(shots$period)
+shots$playoffs <- as.factor(shots$playoffs)
+shots$shot_distance <- as.factor(shots$shot_distance)
+
+
 # Turn the scoring flag into a factor
 
 shots[shots$shot_made_flag == 1,]$shot_made_flag<-'Yes'
 shots[shots$shot_made_flag == 0,]$shot_made_flag<-'No'
 shots$shot_made_flag<-as.factor(shots$shot_made_flag)
 
-# Skip the competition rows kept by Kaggle
-shots<-shots[!is.na(shots$shot_made_flag),]
+
 
 summary(shots)
 
@@ -36,5 +60,18 @@ NB_shots
 
 
 NB_preds <- predict (NB_shots, shots)
-# Confusion matrix
-table(NB_preds,shots$shot_made_flag)
+
+# Output of results------------------------------------------------
+conf.matrix <- table(NB_preds,shots$shot_made_flag)
+
+conf.matrix
+m.precission <- conf.matrix[2,2] / ( conf.matrix[2,2] + conf.matrix[1,2])
+m.recall <- conf.matrix[2,2] / ( conf.matrix[2,2] + conf.matrix[2,1])
+m.accuracy <- (conf.matrix[2,2] + conf.matrix[1,1])  / length(NB_preds)
+m.Fscore <-2*m.precission*m.recall/ (m.precission + m.recall)
+cat(" Precission ", m.precission )
+cat(" Recall ",  m.recall)
+cat(" Accuracy ", m.accuracy )
+cat(" F-score ", m.Fscore )
+
+summary(NB_preds)
