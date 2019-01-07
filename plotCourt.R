@@ -1,6 +1,14 @@
+# Based on the dimentions found at
+# https://www.recunlimited.com/blog/diagrams-basketball-courts/
+
+arc.polygon <- function (x , y , r , N = 100 , right= 0.0 , left= 2*pi) {
+  n <- seq(right, left, length = N) 
+  coords <- t(rbind( x + r*cos(n) , y + r*sin(n))) 
+  return(coords) 
+}
 
 
-plot.court<-function(offset_y){
+plot.court<-function(offset_y = 55.5){
   
   plot(c(-300,300),c(-100,1000), type = "n" ,xlab ="", ylab ="")
   
@@ -24,18 +32,12 @@ plot.court<-function(offset_y){
         return(940 - offset_y - y0 + mirr*(y.coordinate - invOffset*offset_y))
       }
       
-      arc.polygon <- function (x , y , r , N = 100 , right= 0.0 , left= 2*pi) {
-        n <- seq(right, left, length = N) 
-        coords <- t(rbind( x + r*cos(n) , y + r*sin(n))) 
-        return(coords) 
-      }
-      
       # Small circle
-      lines(arc.polygon(0 , y(190),60))
+      lines(arc.polygon(0 , y(190), 60))
       
       # Basket
       rect(-30 , y(40) , 30 , y(40) )
-      lines(arc.polygon(0,y(55.5),15))
+      lines(arc.polygon(0, y(55.5), 15))
       
       # Inner box
       rect(-80, y(0) , 80 , y(190) )
