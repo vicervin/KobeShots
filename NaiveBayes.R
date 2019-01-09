@@ -1,3 +1,4 @@
+source("utilities.R")
 shots<-read.csv('data/data.csv')
 
 # Skip the competition rows kept by Kaggle
@@ -25,7 +26,6 @@ shots$loc_x <- NULL
 shots$loc_y <- NULL
 shots$lon <- NULL
 shots$lat <- NULL
-shots$seconds_remaining <- NULL
 shots$season <- NULL
 shots$team_id <- NULL
 shots$game_date <- NULL
@@ -33,6 +33,7 @@ shots$shot_id <- NULL
 
 # Turn some numeric into factors
 shots$minutes_remaining <- as.factor(shots$minutes_remaining)
+shots$seconds_remaining <- as.factor(shots$seconds_remaining)
 shots$period <- as.factor(shots$period)
 shots$playoffs <- as.factor(shots$playoffs)
 shots$shot_distance <- as.factor(shots$shot_distance)
@@ -53,7 +54,7 @@ summary(shots)
 
 
 #-Naive Bayes-------------------------------------------------------
-#install.packages('e1071')
+# install.packages('e1071')
 library(e1071)
 NB_shots<-naiveBayes(shot_made_flag ~ . , data = shots)
 NB_shots
@@ -62,16 +63,7 @@ NB_shots
 NB_preds <- predict (NB_shots, shots)
 
 # Output of results------------------------------------------------
-conf.matrix <- table(NB_preds,shots$shot_made_flag)
-
-conf.matrix
-m.precission <- conf.matrix[2,2] / ( conf.matrix[2,2] + conf.matrix[1,2])
-m.recall <- conf.matrix[2,2] / ( conf.matrix[2,2] + conf.matrix[2,1])
-m.accuracy <- (conf.matrix[2,2] + conf.matrix[1,1])  / length(NB_preds)
-m.Fscore <-2*m.precission*m.recall/ (m.precission + m.recall)
-cat(" Precission ", m.precission )
-cat(" Recall ",  m.recall)
-cat(" Accuracy ", m.accuracy )
-cat(" F-score ", m.Fscore )
-
+print.c.m ( NB_preds, shots$shot_made_flag)
 summary(NB_preds)
+
+

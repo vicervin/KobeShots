@@ -27,7 +27,19 @@ game.with.most.shots<-shots.per.game[most.shots.game,]$Var1
 plot(shots[shots$game_id == game.with.most.shots,]$time,
      shots[shots$game_id == game.with.most.shots,]$shot_made_flag,
      pch = 16)
+
+
+
 # Maybe the time is not so important for creating a sequence, 
 # Kobe depends on another 4 guys to shoot, he can't shoot
 # every second , so filling the 0s would be adding rubish noise.
 # maybe it's important as a factor
+plot(shots$time,
+     shots$shot_made_flag,
+     pch = 16)
+
+
+abline(v=12*60) # End of quarters
+abline(v=2*12*60)
+abline(v=3*12*60)
+abline(v=4*12*60)
