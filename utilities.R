@@ -2,8 +2,8 @@ print.c.m <-function (predictions,truth){
   # Output of results------------------------------------------------
   # Confusion matrix
   c.m <- table(prediction = predictions, truth = truth)
-  m.precission <- c.m[2,2] / ( c.m[2,2] + c.m[1,2])
-  m.recall <- c.m[2,2] / ( c.m[2,2] + c.m[2,1])
+  m.recall <- c.m[2,2] / ( c.m[2,2] + c.m[1,2])
+  m.precission <- c.m[2,2] / ( c.m[2,2] + c.m[2,1])
   m.accuracy <- (c.m[2,2] + c.m[1,1])  / length(predictions)
   m.Fscore <-2*m.precission*m.recall/ (m.precission + m.recall)
   c.m.metrics <- list ( precission = m.precission,
