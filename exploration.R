@@ -12,3 +12,21 @@ points(shots[shots$shot_made_flag == 0,]$loc_x ,
        shots[shots$shot_made_flag == 0,]$loc_y , 
        pch ='.',
        col='red')
+
+# Shot frequency vs distance
+plot( aggregate (shot_made_flag ~ shot_distance, data = shots, FUN = sum),
+      type = 'h',
+      main = "Frequency of shots vs Distance",
+      xlab = "Distance in feet",
+      ylab = "Frequency"
+      )
+
+plot( aggregate (shot_made_flag ~ shot_distance, data = shots, FUN = mean),
+      type = 'h',
+      main = " Scoring Accuracy vs Distance",
+      xlab = "Distance in feet",
+      ylab = "Accuracy "
+)
+
+
+
