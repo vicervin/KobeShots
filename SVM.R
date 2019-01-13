@@ -48,24 +48,32 @@ shots2 <- data.frame(x = shots[,- which(names(shots) %in% excluded.columns)],
 # Train 60 , test 20, validate 20
 ind.obj<-split.indices(0.6 , 0.2, 0.2, nrow(shots2))
 train <- shots2[ind.obj$train, ]
-test <- shots2[ind.obj$validate, ]
+test <- shots2[ind.obj$test, ]
+validate <- shots2[ind.obj$validate, ]
+
 # --------------------------------------------------------------------------------
-# Fitting the SVM 
-svmfit <- svm(y~., data=train, kernel="sigmoid", cost=0.1)
+# Fitting the SVM
+# Parameters chosen after several trials, radial and cost 100
+svmfit <- svm(y~., data=train, kernel='radial', cost=100)
 #plot(svmfit , shots2)
 summary(svmfit)
 pred <- predict(svmfit, test)
 print.c.m(pred,test$y)
 
+# Validation of the model
+validation.test <- predict(svmfit, validate)
+print.c.m(validation.test,validate$y)
+
 # --------------------------------------------------------------------------------
 # Hyper parameter optimization
-tuning.cost <- c(0.001, 0.01, 0.1, 1,5,10,100)
-tuning.kernel <- c('linear','polynomial','radial basis','sigmoid')
-tune.out <- tune(svm,y~. ,
-                 data = shots2 ,
-                 ranges = list( cost = tuning.cost, kernel = tuning.kernel))
-summary(tune.out)
+#tuning.cost <- c(0.001, 0.01, 0.1, 1,5,10,100)
+#tuning.kernel <- c('radial')
+#tune.out <- tune(svm,y~. ,
+#                 data = shots2 ,
+#                 ranges = list( cost = tuning.cost, kernel = tuning.kernel))
+#summary(tune.out)
 
-bestmod <- tune.out$best.model
-ypred <- predict(bestmod , test)
-print.c.m(ypred , test$y)
+#bestmod <- tune.out$best.model
+#ypred <- predict(bestmod , test)
+#
+#print.c.m(ypred , test$y)
