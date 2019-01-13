@@ -31,15 +31,8 @@ shots$game_date <- NULL
 shots$shot_id <- NULL
 
 # Turn some numeric into factors
-shots$loc_x <- as.factor(shots$loc_x)
-shots$loc_y <- as.factor(shots$loc_y)
 shots$season <- as.factor(shots$season)
-shots$minutes_remaining <- as.factor(shots$minutes_remaining)
-shots$seconds_remaining <- as.factor(shots$seconds_remaining)
-shots$period <- as.factor(shots$period)
 shots$playoffs <- as.factor(shots$playoffs)
-shots$shot_distance <- as.factor(shots$shot_distance)
-
 
 # Turn the scoring flag into a factor
 
@@ -57,6 +50,7 @@ summary(shots)
 ind.obj<-split.indices(0.6 , 0.2, 0.2, nrow(shots))
 train <- shots[ind.obj$train, ]
 test <- shots[ind.obj$test, ]
+validate <- shots[ind.obj$validate, ]
 
 #-Naive Bayes-------------------------------------------------------
 # install.packages('e1071')
@@ -64,11 +58,21 @@ library(e1071)
 NB_shots<-naiveBayes(shot_made_flag ~ . , data = train)
 NB_shots
 
-
 pred <- predict (NB_shots, test)
 
 # Output of results------------------------------------------------
 print.c.m (pred, test$shot_made_flag)
 
+# Explore the results---
+# parameters for likelihoods of the distance given the classes
+t(NB_shots$tables$shot_distance)
 
+# ----Examining the types of shots
+types<-as.data.frame(t(NB_shots$tables$combined_shot_type))
+colnames(types)[3]<- 'P(X_i|Y)'
+types[order(types$`P(X_i|Y)`, decreasing = TRUE),]
+
+print("Validation test")
+pred.validate <- predict(NB_shots,validate)
+print.c.m (pred.validate, validate$shot_made_flag)
 
